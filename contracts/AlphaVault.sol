@@ -10,6 +10,10 @@ interface IWETH is IERC20 {
     function withdraw(uint256 wad) external;
 }
 
+interface TetherToken {
+    function transfer(address, uint256) external;
+}
+
 contract AlphaVaultSwap is Ownable {
     // AlphaVault custom events
     event WithdrawTokens(IERC20 buyToken, uint256 boughtAmount_);
@@ -97,7 +101,14 @@ contract AlphaVaultSwap is Ownable {
 
     // Transfer tokens held by this contrat to the sender/owner.
     function withdrawToken(IERC20 token, uint256 amount) internal {
-        token.transfer(msg.sender, amount);
+        if (address(token) == 0xdAC17F958D2ee523a2206206994597C13D831ec7) {
+            TetherToken(0xdAC17F958D2ee523a2206206994597C13D831ec7).transfer(
+                msg.sender,
+                amount
+            );
+        } else {
+            token.transfer(msg.sender, amount);
+        }
     }
 
     //Sets destination address to msg.sender

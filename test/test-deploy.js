@@ -523,10 +523,10 @@ describe("AlphaVault", function () {
       //https://open-api.openocean.finance/v3/eth/swap_quote?inTokenAddress=0xdAC17F958D2ee523a2206206994597C13D831ec7&outTokenAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&amount=1&slippage=1&gasPrice=5&account=0x84Ebf92fA78e90832a52F1b8b7c1eb35487c091B
       const alphaVaultSwap = await AlphaVaultSwap.deploy();
       let response = await axios.get(
-        `https://open-api.openocean.finance/v3/eth/swap_quote?inTokenAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&outTokenAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48&amount=0.1&slippage=1&gasPrice=3&account=${alphaVaultSwap.address}`
+        `https://open-api.openocean.finance/v3/eth/swap_quote?inTokenAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&outTokenAddress=0xdac17f958d2ee523a2206206994597c13d831ec7&amount=0.1&slippage=1&gasPrice=10&account=${alphaVaultSwap.address}`
       );
       let response1 = await axios.get(
-        `https://open-api.openocean.finance/v3/eth/swap_quote?inTokenAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&outTokenAddress=0x6B175474E89094C44Da98b954EedeAC495271d0F&amount=0.1&slippage=1&gasPrice=3&account=${alphaVaultSwap.address}`
+        `https://open-api.openocean.finance/v3/eth/swap_quote?inTokenAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&outTokenAddress=0x6B175474E89094C44Da98b954EedeAC495271d0F&amount=0.1&slippage=1&gasPrice=5&account=${alphaVaultSwap.address}`
       );
       //   let Response=await response.json();
       swapQuoteJSON = response.data.data;
@@ -593,7 +593,7 @@ describe("AlphaVault", function () {
           swapQuoteJSON1.data,
         ],
         [0, swapQuoteJSON.inAmount, swapQuoteJSON1.inAmount],
-        { value: BigInt("300000000000000000") }
+        { value: BigInt("200000000000000000") }
       );
       const tx = await txRes.wait(1);
       // console.log(tx);
@@ -604,12 +604,7 @@ describe("AlphaVault", function () {
       //     const contractUSDC=await USDC.balanceOf(deployer.address)
       //     console.log("USDC balance-->",contractUSDC.toString());
 
-      let WMATIC = await ethers.getContractAt(
-        "IERC20",
-        swapQuoteJSON.inToken.address,
-        deployer
-      );
-      const contractWMATIC = await WMATIC.balanceOf(deployer.address);
+      const contractWMATIC = await WETH.balanceOf(deployer.address);
       console.log("WEth balance-->", contractWMATIC.toString());
 
       let USDT = await ethers.getContractAt(
@@ -618,7 +613,7 @@ describe("AlphaVault", function () {
         deployer
       );
       const contractUSDT = await USDT.balanceOf(deployer.address);
-      console.log("USDC balance-->", contractUSDT.toString());
+      console.log("USDT balance-->", contractUSDT.toString());
     }
     let DAI = await ethers.getContractAt(
       "IERC20",
