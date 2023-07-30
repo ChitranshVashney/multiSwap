@@ -526,13 +526,13 @@ describe("AlphaVault", function () {
         `https://open-api.openocean.finance/v3/eth/swap_quote?inTokenAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&outTokenAddress=0xdac17f958d2ee523a2206206994597c13d831ec7&amount=0.1&slippage=1&gasPrice=10&account=${alphaVaultSwap.address}`
       );
       let response1 = await axios.get(
-        `https://open-api.openocean.finance/v3/eth/swap_quote?inTokenAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&outTokenAddress=0x6B175474E89094C44Da98b954EedeAC495271d0F&amount=0.1&slippage=1&gasPrice=5&account=${alphaVaultSwap.address}`
+        `https://open-api.openocean.finance/v3/eth/swap_quote?inTokenAddress=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&outTokenAddress=0x6B175474E89094C44Da98b954EedeAC495271d0F&amount=0.2&slippage=1&gasPrice=5&account=${alphaVaultSwap.address}`
       );
       //   let Response=await response.json();
       swapQuoteJSON = response.data.data;
       swapQuoteJSON1 = response1.data.data;
       // console.log(swapQuoteJSON);
-      // console.log(swapQuoteJSON1);
+      console.log(swapQuoteJSON1);
       let WETH = await ethers.getContractAt(
         "IWETH",
         swapQuoteJSON.inToken.address,
@@ -569,30 +569,34 @@ describe("AlphaVault", function () {
       const txRes = await alphaVaultSwap.multiSwap(
         [
           "0x0000000000000000000000000000000000000000",
-          swapQuoteJSON.inToken.address,
+          // swapQuoteJSON.inToken.address,
           swapQuoteJSON.inToken.address,
         ],
         [
           swapQuoteJSON.inToken.address,
-          swapQuoteJSON.outToken.address,
+          // swapQuoteJSON.outToken.address,
           swapQuoteJSON1.outToken.address,
         ],
         [
           "0x0000000000000000000000000000000000000000",
-          swapQuoteJSON.to,
+          // swapQuoteJSON.to,
           swapQuoteJSON1.to,
         ],
         [
           "0x0000000000000000000000000000000000000000",
-          swapQuoteJSON.to,
+          // swapQuoteJSON.to,
           swapQuoteJSON1.to,
         ],
         [
           "0x1230000000000000000001230000",
-          swapQuoteJSON.data,
+          // swapQuoteJSON.data,
           swapQuoteJSON1.data,
         ],
-        [0, swapQuoteJSON.inAmount, swapQuoteJSON1.inAmount],
+        [
+          0,
+          //  swapQuoteJSON.inAmount,
+          swapQuoteJSON1.inAmount,
+        ],
         { value: BigInt("200000000000000000") }
       );
       const tx = await txRes.wait(1);
@@ -624,3 +628,5 @@ describe("AlphaVault", function () {
     console.log("DaI balance-->", contractUSDT1.toString());
   });
 });
+// 372908497233614410413
+// 1864542486168072052

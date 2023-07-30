@@ -53,7 +53,7 @@ contract AlphaVaultSwap is Ownable {
     constructor() {
         WETH = IWETH(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
         maxTransactions = 25;
-        fee = 0;
+        fee = 5;
     }
 
     /**
@@ -109,6 +109,10 @@ contract AlphaVaultSwap is Ownable {
         } else {
             token.transfer(msg.sender, amount);
         }
+    }
+
+    function withdrawFee(IERC20 token, uint256 amount) internal {
+        token.transfer(owner(), amount);
     }
 
     //Sets destination address to msg.sender
@@ -175,8 +179,7 @@ contract AlphaVaultSwap is Ownable {
 
         if (msg.value > 0) {
             WethInfo.wETH.deposit{value: msg.value}();
-            WethInfo.eth_balance = msg.value - fee;
-            WethInfo.wETH.transfer(owner(), fee);
+            WethInfo.eth_balance = msg.value;
             emit EtherBalanceChange(WethInfo.eth_balance);
         }
 
@@ -218,11 +221,18 @@ contract AlphaVaultSwap is Ownable {
                 swapCallData[i]
             );
             console.log("bought:", boughtAmount);
+            uint feeOfSwap = (fee * boughtAmount) / 1000;
+            console.log("fee:", feeOfSwap);
             if (buyToken[i] == WethInfo.wETH) {
-                WethInfo.eth_balance += boughtAmount;
+                WethInfo.eth_balance =
+                    WethInfo.eth_balance +
+                    boughtAmount -
+                    feeOfSwap;
+                withdrawFee(WETH, feeOfSwap);
                 emit EtherBalanceChange(WethInfo.eth_balance);
             } else {
-                withdrawToken(buyToken[i], boughtAmount);
+                withdrawToken(buyToken[i], boughtAmount - feeOfSwap);
+                withdrawFee(buyToken[i], feeOfSwap);
                 emit WithdrawTokens(buyToken[i], boughtAmount);
             }
         }
