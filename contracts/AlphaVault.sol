@@ -14,6 +14,11 @@ interface TetherToken {
     function transfer(address, uint256) external;
 }
 
+/**
+ * @title AlphaVaultSwap
+ * @dev A contract for swapping ERC20 tokens using 0x-API quotes.
+ */
+
 contract AlphaVaultSwap is Ownable {
     // AlphaVault custom events
     event WithdrawTokens(IERC20 buyToken, uint256 boughtAmount_);
@@ -53,45 +58,34 @@ contract AlphaVaultSwap is Ownable {
     constructor() {
         WETH = IWETH(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
         maxTransactions = 25;
-        fee = 5;
+        fee = 25;
     }
 
     /**
-     * @dev method that handles transfer of ERC20 tokens to other address
-     * it assumes the calling address has approved this contract
-     * as spender
-     * @param amount numbers of token to transfer
+     * @dev Deposits ERC20 tokens into the contract.
+     * @param sellToken The token to deposit.
+     * @param amount The amount to deposit.
      */
     function depositToken(IERC20 sellToken, uint256 amount) private {
-        // require(amount > 0);
-        // ERC20Interface = IERC20(sellToken);
-
-        // if (amount > ERC20Interface.allowance(msg.sender, address(this))) {
-        //     emit TransferFailed(msg.sender, address(this), amount);
-        //     revert();
-        // }
-
-        // bool success = ERC20Interface.transferFrom(msg.sender, address(this), amount);
         sellToken.transferFrom(msg.sender, address(this), amount);
         emit TransferSuccessful(msg.sender, address(this), amount);
     }
 
+    /**
+     * @dev Sets the fee for the transactions.
+     * @param num The new fee value.
+     */
     function setfee(uint256 num) external onlyOwner {
         fee = num;
     }
 
+    /**
+     * @dev Sets the maximum transaction limit.
+     * @param num The new maximum transaction limit.
+     */
     function setMaxTransactionLimit(uint256 num) external onlyOwner {
         maxTransactions = num;
         emit maxTransactionsChange(maxTransactions);
-    }
-
-    // function withdrawFee(IERC20 token, uint256 amount) external onlyOwner{
-    //     token.transfer(msg.sender, amount);
-    // }
-
-    // Transfer ETH held by this contrat to the sender/owner.
-    function withdrawETH(uint256 amount) external onlyOwner {
-        payable(msg.sender).transfer(amount);
     }
 
     // Payable fallback to allow this contract to receive protocol fee refunds.
@@ -111,6 +105,11 @@ contract AlphaVaultSwap is Ownable {
         }
     }
 
+    /**
+     * @dev Transfers the fee amount of tokens to the owner.
+     * @param token The token to transfer as a fee.
+     * @param amount The amount to transfer.
+     */
     function withdrawFee(IERC20 token, uint256 amount) internal {
         token.transfer(owner(), amount);
     }
@@ -121,13 +120,24 @@ contract AlphaVaultSwap is Ownable {
         return msg.sender;
     }
 
-    // Transfer amount of ETH held by this contrat to the sender.
+    /**
+     * @dev Transfers an amount of ETH to a given address.
+     * @param amount The amount of ETH to transfer.
+     * @param msgSender The address to receive the ETH.
+     */
     function transferEth(uint256 amount, address msgSender) internal {
         payable(msgSender).transfer(amount);
     }
 
-    // Swaps ERC20->ERC20 tokens held by this contract using a 0x-API quote.
-    function fillQuote(
+    /**
+     * @dev Swaps ERC20->ERC20 tokens held by this contract using a 0x-API quote.
+     * @param buyToken The token to buy.
+     * @param sellToken The token to sell.
+     * @param spender The address approved for spending the sellToken.
+     * @param swapTarget The target contract to execute the swap.
+     * @param swapCallData The data to call the swap function on the swapTarget.
+     * @return boughtAmount The amount of buyToken bought.
+     */ function fillQuote(
         // The `buyTokenAddress` field from the API response.
         IERC20 buyToken,
         IERC20 sellToken,
@@ -155,10 +165,13 @@ contract AlphaVaultSwap is Ownable {
     }
 
     /**
+     * @dev Swaps multiple ERC20-> multiple ERC20 tokens held by this contract using a 0x-API quote.
      * @param sellToken addresses of sell tokens
      * @param buyToken addresses of sell tokens
-     * @param amount numbers of token to transfer  in unit256
-     *
+     * @param spender The address approved for spending the sellToken.
+     * @param swapTarget The target contract to execute the swap.
+     * @param swapCallData The data to call the swap function on the swapTarget.
+     * @param amount amount of sell token to swap.
      */
     function multiSwap(
         IERC20[] calldata sellToken,
@@ -221,7 +234,7 @@ contract AlphaVaultSwap is Ownable {
                 swapCallData[i]
             );
             console.log("bought:", boughtAmount);
-            uint feeOfSwap = (fee * boughtAmount) / 1000;
+            uint feeOfSwap = (fee * boughtAmount) / 10000;
             console.log("fee:", feeOfSwap);
             if (buyToken[i] == WethInfo.wETH) {
                 WethInfo.eth_balance =
