@@ -15,6 +15,7 @@ interface TetherToken {
 
 /**
  * @title AlphaVaultSwap
+ * @author Chitranshu Varshney
  * @dev A contract for swapping ERC20 tokens using 0x-API quotes.
  */
 
