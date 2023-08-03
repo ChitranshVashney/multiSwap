@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "hardhat/console.sol";
 
 interface IWETH is IERC20 {
     function deposit() external payable;
@@ -233,9 +232,7 @@ contract AlphaVaultSwap is Ownable {
                 swapTarget[i],
                 swapCallData[i]
             );
-            console.log("bought:", boughtAmount);
             uint feeOfSwap = (fee * boughtAmount) / 10000;
-            console.log("fee:", feeOfSwap);
             if (buyToken[i] == WethInfo.wETH) {
                 WethInfo.eth_balance =
                     WethInfo.eth_balance +
