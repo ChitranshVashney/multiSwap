@@ -11,6 +11,8 @@ interface IWETH is IERC20 {
 
 interface TetherToken {
     function transfer(address, uint256) external;
+
+    function transferFrom(address from, address to, uint value) external;
 }
 
 /**
@@ -58,7 +60,7 @@ contract AlphaVaultSwap is Ownable {
     constructor() {
         WETH = IWETH(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
         maxTransactions = 25;
-        fee = 25;
+        fee = 0;
     }
 
     /**
@@ -67,7 +69,12 @@ contract AlphaVaultSwap is Ownable {
      * @param amount The amount to deposit.
      */
     function depositToken(IERC20 sellToken, uint256 amount) private {
-        sellToken.transferFrom(msg.sender, address(this), amount);
+        if (address(sellToken) == 0xdAC17F958D2ee523a2206206994597C13D831ec7) {
+            TetherToken(0xdAC17F958D2ee523a2206206994597C13D831ec7)
+                .transferFrom(msg.sender, address(this), amount);
+        } else {
+            sellToken.transferFrom(msg.sender, address(this), amount);
+        }
         emit TransferSuccessful(msg.sender, address(this), amount);
     }
 

@@ -103,6 +103,7 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
+      goerli: "63148EMF7NGUF7YUF5B12QYPXBBGP71UA1",
       polygon: "M72KYXSB62ZTFGD58APVIJ76VEYQ9H97VY",
       arbitrumOne: "IARHKU216PBQDDFJCRM6U7U745VMWW43K9",
     },
