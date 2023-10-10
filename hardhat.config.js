@@ -1,28 +1,24 @@
-require("@nomiclabs/hardhat-waffle");
-require("hardhat-gas-reporter");
-require("@nomiclabs/hardhat-etherscan");
 require("dotenv").config();
-require("solidity-coverage");
 require("hardhat-deploy");
+require("@nomicfoundation/hardhat-toolbox");
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 
-const MAINNET_RPC_URL =
-  process.env.MAINNET_RPC_URL || process.env.ALCHEMY_MAINNET_RPC_URL || "";
-const POLYGON_MAINNET_RPC_URL =
-  process.env.POLYGON_MAINNET_RPC_URL ||
-  process.env.ALCHEMY_MAINNET_RPC_URL ||
-  "";
+const ankr_api = process.env.Ankr_API;
+
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || "";
-const GOERLI_RPC_URL =
-  process.env.GOERLI_RPC_URL ||
-  "https://eth-goerli.alchemyapi.io/v2/your-api-key";
-const PRIVATE_KEY =
-  process.env.PRIVATE_KEY ||
-  "0x11ee3108a03081fe260ecdc106554d09d9d1209bcafd46942b10e02943effc4a";
+const MAINNET_RPC_URL = `https://rpc.ankr.com/eth/${ankr_api}`;
+const GOERLI_RPC_URL = `https://eth-goerli.g.alchemy.com/v2/${ankr_api}`;
+const poly_RPC_URL = `https://rpc.ankr.com/polygon/${ankr_api}`;
+const bnb_RPC_URL = `https://rpc.ankr.com/bsc/${ankr_api}`;
+const arbi_RPC_URL = `https://rpc.ankr.com/arbitrum/${ankr_api}`;
+const opt_RPC_URL = `https://rpc.ankr.com/optimism/${ankr_api}`;
+const avalanche_RPC_URL = `https://rpc.ankr.com/avalanche/${ankr_api}`;
+const fantom_RPC_URL = `https://rpc.ankr.com/fantom/${ankr_api}`;
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 
 module.exports = {
@@ -30,7 +26,7 @@ module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: MAINNET_RPC_URL,
+        url: poly_RPC_URL,
       },
     },
     localhost: {
@@ -42,14 +38,20 @@ module.exports = {
       chainId: 5,
       blockConfirmations: 6,
     },
+    polygon: {
+      url: poly_RPC_URL,
+      accounts: [PRIVATE_KEY],
+      chainId: 137,
+      blockConfirmations: 6,
+    },
     bnb: {
-      url: MAINNET_RPC_URL,
+      url: bnb_RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 56,
       blockConfirmations: 6,
     },
     arbitrum: {
-      url: MAINNET_RPC_URL,
+      url: arbi_RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 42161,
       blockConfirmations: 6,
@@ -61,27 +63,21 @@ module.exports = {
       blockConfirmations: 6,
     },
     optimism: {
-      url: MAINNET_RPC_URL,
+      url: opt_RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 10,
       blockConfirmations: 6,
     },
-    polygon: {
-      url: MAINNET_RPC_URL,
+    fantom: {
+      url: fantom_RPC_URL,
       accounts: [PRIVATE_KEY],
-      chainId: 137,
+      chainId: 250,
       blockConfirmations: 6,
     },
     avalanche: {
-      url: MAINNET_RPC_URL,
+      url: avalanche_RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 43114,
-      blockConfirmations: 6,
-    },
-    fantom: {
-      url: MAINNET_RPC_URL,
-      accounts: [PRIVATE_KEY],
-      chainId: 250,
       blockConfirmations: 6,
     },
   },
@@ -103,9 +99,13 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      goerli: "63148EMF7NGUF7YUF5B12QYPXBBGP71UA1",
       polygon: "M72KYXSB62ZTFGD58APVIJ76VEYQ9H97VY",
       arbitrumOne: "IARHKU216PBQDDFJCRM6U7U745VMWW43K9",
+      goerli: "63148EMF7NGUF7YUF5B12QYPXBBGP71UA1",
+      optimisticEthereum: "FE29CHGF31B2QUZFVIVM2CQ4HM24AY5YDZ",
+      bsc: "Y4K2D5QG3VP45VJD32FSP75XQHXFWEIXB6",
+      opera: "KQI7M7695VS84748IKVNDEBGVT727SHDTQ",
+      avalanche: "Y8HBKTD4C717FP5S7V5K35QHIDJDWNFJ76",
     },
     customChains: [],
   },
