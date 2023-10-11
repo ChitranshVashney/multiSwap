@@ -1,5 +1,3 @@
-const { findContractDeployer } = require("@alch/alchemy-sdk");
-const { deployContract } = require("ethereum-waffle");
 const { ethers, run, network } = require("hardhat");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
@@ -7,7 +5,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
   const AlphaVault = await deploy("AlphaVaultSwap", {
     from: deployer,
-    args: [],
+    args: ["0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"],
     log: true,
   });
   console.log(AlphaVault);
@@ -16,7 +14,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     try {
       await run("verify:verify", {
         address: contractAddress,
-        constructorArguments: [],
+        constructorArguments: args,
       });
     } catch (e) {
       if (e.message.toLowerCase().includes("already verified")) {
@@ -27,6 +25,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     }
   };
   if (true) {
-    await verify(AlphaVault.address, []);
+    await verify(AlphaVault.address, [
+      "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+    ]);
   }
 };
